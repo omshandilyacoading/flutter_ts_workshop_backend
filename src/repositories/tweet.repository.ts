@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import TweetModel from "../database/models/tweet.model";
 import { ItweetInterface } from "../database/interface/tweet.interface";
+import UserModel from "../database/models/user.model";
 
 export const getTweetRepo = async(tweetId: string): Promise<ItweetInterface|null>=>{
     try {
@@ -59,13 +60,29 @@ export const updateTweetRepo = async(
             return false
         }
     };
-    
 
-
-
-
-
-
+export const getAllTweetsRepo = async ():Promise<any[]|null> =>{
+    try {
+        const allTweets = await TweetModel.find();
+        if(!allTweets|| allTweets.length==0){
+            return null;
+        }
+        const TweetWithUserInfo =await Promise.all(
+            allTweets.map(async(tweet)=>{
+                const admin = await UserModel.findOne({uid: tweet.adminId})
+                if(!admin){
+                    return {tweet,admin:null}
+                }
+                return {tweet,admin}
+            })
+        );
+        return TweetWithUserInfo;
+}
+catch(error){
+    console.log(error);
+    return null;
+}
+}
 
      
 

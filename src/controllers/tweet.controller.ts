@@ -1,5 +1,5 @@
 import {Response,Request} from "express"
-import { getTweetRepo,createTweetRepo,deleteTweetRepo,updateTweetRepo } from "../repositories/tweet.repository"
+import { getTweetRepo,createTweetRepo,deleteTweetRepo,updateTweetRepo, getAllTweetsRepo } from "../repositories/tweet.repository"
 import { updateUserWithTweetIdRepo,deleteUserWithTweetIdRepo } from "../repositories/user.repository";
 import { ItweetInterface } from "../database/interface/tweet.interface";
 
@@ -19,6 +19,23 @@ export const getTweetController = async(req:Request,res:Response)=>{
         res.status(500).json({"error":error})
     }
 }
+
+export const getAllTweetsController = async(req:Request,res:Response)=>{
+
+    try {
+        const tweets =await getAllTweetsRepo();
+        if(tweets){
+            res.status(200).json({"data": tweets})
+        }
+        else{
+        res.status(500).json({error:tweets})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({"error":error})
+    }
+}
+
 
 
 export const createTweetController = async(req:Request,res:Response)=>{
